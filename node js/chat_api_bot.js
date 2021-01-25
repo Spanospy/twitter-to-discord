@@ -2,7 +2,7 @@
 
 
 const Discord = require('discord.js');
-const fs = require('fs');
+
 const needle = require('needle');
 
 
@@ -77,7 +77,7 @@ async function twitterToHackmud() {
     let timeout = 0;
     filteredStream.on('timeout', () => {
       // Reconnect on error
-      console.log('A Twitter connection error occurred. Reconnecting…');
+      console.log('A Twitter connection error occurred. Reconnecting…'); //Haven't seen this happen yet
       setTimeout(() => {
         timeout++;
         console.log("Pre-streamConnect1")
@@ -175,6 +175,7 @@ function streamConnect() {
       const json = JSON.parse(data);
       console.log("tweet received " + getLondonTime(new Date()))
       console.log(json);
+      //post to discord server here
   } catch (e) {
     console.log("Twitter Keep alive signal " + getLondonTime(new Date()))
       // Keep alive signal received. Do nothing.
