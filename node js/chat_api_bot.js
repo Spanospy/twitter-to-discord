@@ -44,12 +44,12 @@ turnOn();
 
 
 function turnOn (args) {
-  twitterThing = twitterToHackmud()
+  twitterThing = twitterThingy()
   console.log('I am ready!');
 }
 // Create an event listener for messages
 
-async function twitterToHackmud() {
+async function twitterThingy() {
   let currentRules;
   
     try {
