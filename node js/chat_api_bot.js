@@ -17,7 +17,7 @@ const streamURL = 'https://api.twitter.com/2/tweets/search/stream';
 
 // Edit rules as desired here below
 const rules = [
-  { 'value': 'from:BotDaft from:everycolorbot' }
+  { 'value': 'from:BotDaft' }
 ];
 
 
@@ -53,15 +53,17 @@ async function twitterThingy() {
   let currentRules;
   
     try {
+      // (Spano's note: not running unneeded rule stuff seems to help. Twitter remembers whatever rule you set it to be before.)
+
       // Gets the complete list of rules currently applied to the stream
-      currentRules = await getAllRules();
-      //console.log("twitter_rules")
+      //currentRules = await getAllRules();
       //console.log(currentRules)
+
       // Delete all rules. Comment the line below if you want to keep your existing rules.
-      await deleteAllRules(currentRules);
+      //await deleteAllRules(currentRules);
   
       // Add rules to the stream. Comment the line below if you don't want to add new rules.
-      await setRules();
+      //await setRules();
       
     } catch (e) {
       console.error(e);
@@ -163,20 +165,22 @@ function streamConnect() {
     }
     console.log("getting stream")
   const stream = needle.get(streamURL, {
-      headers: { 
-          Authorization: `Bearer ${twitterBearer}`
-      }
-  }); //options used to be a third param
+    headers: { 
+        Authorization: `Bearer ${twitterBearer}`
+    }
+}, (...a) => console.log(a)); //options used to be a third param
 
   stream.on('data', data => {
     //console.log("Attempting stream.on data try")
-  try {
-    //console.log("Parsing json")
-      const json = JSON.parse(data);
-      console.log("tweet received " + getLondonTime(new Date()))
-      console.log(json);
-      //post to discord server here
-  } catch (e) {
+    try {
+      //console.log("Parsing json")
+        const json = JSON.parse(data);
+        //var timesta = Date.now()
+        console.log("twitter_to_hackmud " + getLondonTime(new Date()))
+        console.log(json);
+        var daft_message = json.data.text
+        console.log(daft_message);
+    } catch (e) {
     console.log("Twitter Keep alive signal " + getLondonTime(new Date()))
       // Keep alive signal received. Do nothing.
   }
@@ -190,6 +194,14 @@ function streamConnect() {
         console.log("connreset") //This never gets triggered
           stream.emit('timeout');
       }
+  });
+
+  stream.on('close', close => {
+    console.log('***stream closed!***') //Haven't seen this happen yet
+  });
+
+  stream.on('error', zeerror => {
+    console.log('***stream errored!***') //Haven't seen this happen yet
   });
   console.log("returning stream")
   return stream;
