@@ -15,6 +15,9 @@ const twitterBearer = "<REDACTED>"
 const rulesURL = 'https://api.twitter.com/2/tweets/search/stream/rules'
 const streamURL = 'https://api.twitter.com/2/tweets/search/stream';
 
+
+var streamtimeout
+
 // Edit rules as desired here below
 const rules = [
   { 'value': 'from:BotDaft' }
@@ -78,6 +81,7 @@ async function twitterThingy() {
     const filteredStream = streamConnect()
     let timeout = 0;
     filteredStream.on('timeout', () => {
+      clearTimeout(streamtimeout)
       // Reconnect on error
       console.log('A Twitter connection error occurred. Reconnecting…'); //Haven't seen this happen yet
       setTimeout(() => {
@@ -170,7 +174,11 @@ function streamConnect() {
     }
 }, (...a) => console.log(a)); //options used to be a third param
 
+
+streamtimeout = setTimeout(() => stream.emit('timeout'), 31*1000)
+
   stream.on('data', data => {
+    streamtimeout.refresh()
     //console.log("Attempting stream.on data try")
     try {
       //console.log("Parsing json")
