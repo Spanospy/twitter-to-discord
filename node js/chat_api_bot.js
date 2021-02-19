@@ -83,14 +83,14 @@ async function twitterThingy() {
     filteredStream.on('timeout', () => {
       clearTimeout(streamtimeout)
       // Reconnect on error
-      console.log('A Twitter connection error occurred. Reconnecting…'); //Haven't seen this happen yet
+      console.log('A Twitter connection error occurred. Reconnecting…');
       setTimeout(() => {
         timeout++;
         console.log("Pre-streamConnect1")
-        streamConnect(twitterBearer);
+        void streamConnect(twitterBearer);
       }, 2 ** timeout);
       console.log("Pre-streamConnect2")
-      streamConnect(twitterBearer);
+      void streamConnect(twitterBearer);
     })
 }
 
