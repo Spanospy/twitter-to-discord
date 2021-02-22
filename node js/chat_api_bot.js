@@ -17,6 +17,9 @@ const streamURL = 'https://api.twitter.com/2/tweets/search/stream';
 
 
 var streamtimeout
+var streamstart
+var streamnumber = 0
+var streaminfo
 
 // Edit rules as desired here below
 const rules = [
@@ -84,13 +87,15 @@ async function twitterThingy() {
       clearTimeout(streamtimeout)
       // Reconnect on error
       console.log('A Twitter connection error occurred. Reconnecting…');
+      console.log('Current timeout: ' + 2 ** timeout)
+      console.log('Next timeout: ' + 2 ** (timeout + 1))
       setTimeout(() => {
         timeout++;
         console.log("Pre-streamConnect1")
-        void streamConnect(twitterBearer);
+        void twitterThingy();
       }, 2 ** timeout);
-      console.log("Pre-streamConnect2")
-      void streamConnect(twitterBearer);
+      //console.log("Pre-streamConnect2")
+      //void streamConnect(twitterBearer);
     })
 }
 
@@ -163,6 +168,9 @@ async function setRules() {
 
 function streamConnect() {
   console.log("Starting streamConnect")
+  streamstart = getLondonTime(new Date());
+  streamnumber++
+  streaminfo = " (stream started at " + streamstart + ", stream number " + streamnumber + ")"
   //Listen to the stream
   const options = {
       timeout: 20000
@@ -184,12 +192,12 @@ streamtimeout = setTimeout(() => stream.emit('timeout'), 31*1000)
       //console.log("Parsing json")
         const json = JSON.parse(data);
         //var timesta = Date.now()
-        console.log("twitter_to_hackmud " + getLondonTime(new Date()))
+        console.log("twitter_to_hackmud " + getLondonTime(new Date()) + streaminfo)
         console.log(json);
         var daft_message = json.data.text
         console.log(daft_message);
     } catch (e) {
-    console.log("Twitter Keep alive signal " + getLondonTime(new Date()))
+      console.log("Twitter Keep alive signal " + getLondonTime(new Date()) + streaminfo)
       // Keep alive signal received. Do nothing.
   }
   }).on('error', error => {
